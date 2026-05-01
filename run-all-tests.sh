@@ -153,7 +153,7 @@ else
   GREEN=""; RED=""; YELLOW=""; CYAN=""; BOLD=""; DIM=""; RESET=""
 fi
 
-LOG_DIR="$SCRIPT_DIR/.test-logs"
+LOG_DIR="$SCRIPT_DIR/target/test-logs"
 mkdir -p "$LOG_DIR"
 
 VERSION_FLAG=""
@@ -226,7 +226,7 @@ for module in "${MODULES[@]}"; do
     printf "\r  %s[PASS]%s %s\n" "$GREEN" "$RESET" "$module"
     PASSED+=("$module")
   else
-    printf "\r  %s[FAIL]%s %s  %s→ .test-logs/%s.log%s\n" "$RED" "$RESET" "$module" "$DIM" "$module" "$RESET"
+    printf "\r  %s[FAIL]%s %s  %s→ target/test-logs/%s.log%s\n" "$RED" "$RESET" "$module" "$DIM" "$module" "$RESET"
     FAILED+=("$module")
   fi
 done
@@ -256,7 +256,7 @@ if [ "$IS_4X" -eq 1 ] && [ ${#PASSED[@]} -gt 0 ]; then
   done
 fi
 
-printf "\n  Logs: .test-logs/\n\n"
+printf "\n  Logs: target/test-logs/\n\n"
 
 # Exit code:
 #   3.x → 0 if all pass, 1 if any fail
