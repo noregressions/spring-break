@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.example</groupId>
+        <artifactId>spring-boot-migration-tests</artifactId>
+        <version>1.0.0</version>
+    </parent>
+
+    <artifactId>testcontainers-class-relocation</artifactId>
+    <name>Tier 1 — Testcontainers Class Relocation</name>
+    <description>Testcontainers 2.0 relocated container classes to new packages. Imports break.</description>
+
+    <dependencies>
+        <!-- spring-boot-starter-test pulls in Testcontainers transitively.
+             On Boot 3.x: Testcontainers 1.x with org.testcontainers.containers.PostgreSQLContainer
+             On Boot 4.0: Testcontainers 2.x with org.testcontainers.postgresql.PostgreSQLContainer
+             The source code uses old package imports — compiles on 3.x, fails on 4.0 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>testcontainers</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+</project>

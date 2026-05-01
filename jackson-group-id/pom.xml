@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.example</groupId>
+        <artifactId>spring-boot-migration-tests</artifactId>
+        <version>1.0.0</version>
+    </parent>
+
+    <artifactId>jackson-group-id</artifactId>
+    <name>Tier 1 — Jackson Group ID Change</name>
+    <description>Jackson 3.0 moves from com.fasterxml.jackson to tools.jackson. Every import breaks.</description>
+
+    <dependencies>
+        <!-- spring-boot-starter-json pulls in Jackson transitively.
+             On Boot 3.x: com.fasterxml.jackson.core:jackson-databind (old group ID)
+             On Boot 4.0: tools.jackson.core:jackson-databind (new group ID)
+             The source code uses com.fasterxml.jackson imports — compiles on 3.x, fails on 4.0 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-json</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+</project>

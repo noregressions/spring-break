@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.example</groupId>
+        <artifactId>spring-boot-migration-tests</artifactId>
+        <version>1.0.0</version>
+    </parent>
+
+    <artifactId>modular-starters</artifactId>
+    <name>Tier 2 — Modular Auto-Configuration</name>
+    <description>The monolithic spring-boot-autoconfigure is split into focused modules. Missing starters = missing beans = startup failure.</description>
+
+    <dependencies>
+        <!--
+            On Spring Boot 3.x: spring-boot-starter-web transitively pulls in
+            auto-configuration for Jackson, validation, and other features via
+            the monolithic spring-boot-autoconfigure module.
+
+            On Spring Boot 4.0: auto-configuration is modularised. Features that
+            used to come for free now require explicit starters. If you use
+            Jackson ObjectMapper or Bean Validation without adding the specific
+            starter, the beans don't exist and you get NoSuchBeanDefinitionException.
+
+            This module deliberately includes ONLY spring-boot-starter-web to
+            demonstrate what breaks when the implicit transitive auto-config
+            disappears.
+        -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+</project>

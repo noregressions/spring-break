@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.example</groupId>
+        <artifactId>spring-boot-migration-tests</artifactId>
+        <version>1.0.0</version>
+    </parent>
+
+    <artifactId>junit4-vintage-removed</artifactId>
+    <name>Tier 1 — JUnit 4 Vintage Removed</name>
+    <description>JUnit 4 vintage engine no longer ships. Tests using @RunWith, @Before, @Rule won't run.</description>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!-- JUnit Vintage Engine — bridges JUnit 4 tests to JUnit 5/6 platform.
+             Version managed by the Spring Boot BOM (via junit-bom import).
+             On Boot 3.4.1 (JUnit 5.x): vintage engine bundles junit:junit transitively,
+               so org.junit.RunWith, @Before, @Rule etc. are on the classpath.
+             On Boot 4.0 (JUnit 6.x): vintage engine no longer provides JUnit 4 API
+               classes — org.junit.RunWith etc. are absent from the classpath. -->
+        <dependency>
+            <groupId>org.junit.vintage</groupId>
+            <artifactId>junit-vintage-engine</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+</project>

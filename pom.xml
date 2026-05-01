@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.example</groupId>
+    <artifactId>spring-boot-migration-tests</artifactId>
+    <version>1.0.0</version>
+    <packaging>pom</packaging>
+
+    <name>Spring Boot 3.5 to 4.0 Migration Test Cases</name>
+    <description>
+        Each module demonstrates a specific breaking change between Spring Boot 3.5 and 4.0.
+        Default build uses Spring Boot 3.5.14 (all tests pass).
+        Override with -Dspring-boot.version=4.0.6 to see them fail.
+    </description>
+
+    <!-- ================================================================
+         USAGE
+         =================================================================
+         Build on 3.x (everything green):
+           mvn test
+
+         Build on 4.0 (watch it break):
+           mvn test -Dspring-boot.version=4.0.6
+
+         Build a single module:
+           mvn test -pl jackson-date-serialisation
+           mvn test -pl jackson-date-serialisation -Dspring-boot.version=4.0.6
+         ================================================================ -->
+
+    <properties>
+        <spring-boot.version>3.5.14</spring-boot.version>
+        <java.version>17</java.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
+        <maven-surefire-plugin.version>3.5.2</maven-surefire-plugin.version>
+    </properties>
+
+    <!-- Spring Boot BOM — NOT as parent, so the version is switchable via -D -->
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring-boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.webjars</groupId>
+                <artifactId>webjars-locator-core</artifactId>
+                <version>0.59</version>
+            </dependency>
+            <dependency>
+                <groupId>org.webjars</groupId>
+                <artifactId>webjars-locator-lite</artifactId>
+                <version>1.1.3</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-maven-plugin</artifactId>
+                    <version>${spring-boot.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>${maven-compiler-plugin.version}</version>
+                    <configuration>
+                        <source>${java.version}</source>
+                        <target>${java.version}</target>
+                        <compilerArgs>
+                            <arg>-parameters</arg>
+                        </compilerArgs>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${maven-surefire-plugin.version}</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+
+    <!-- 57 modules organised by migration failure mode.
+         Run on 3.5.14: all pass.  Run on 4.0.6: all fail. -->
+    <modules>
+        <!-- Tier 1 — Won't Build on 4.0  (38 modules)
+             Real imports / artifacts / starters that vanish on 4.0.
+             Build fails at compile or dependency-resolution time. -->
+        <module>jackson-group-id</module>
+        <module>jackson-class-renames</module>
+        <module>undertow-removed</module>
+        <module>security-removed-apis</module>
+        <module>deprecated-classes-removed</module>
+        <module>hibernate-session-delete</module>
+        <module>hibernate-cascade-removal</module>
+        <module>testcontainers-class-relocation</module>
+        <module>spring-retry-removed</module>
+        <module>hibernate-processor-rename</module>
+        <module>listenable-future-removed</module>
+        <module>okhttp3-removed</module>
+        <module>spring-jcl-removed</module>
+        <module>aspectj-observed</module>
+        <module>retry-semantics-change</module>
+        <module>retryable-transaction-order</module>
+        <module>path-matching-engine</module>
+        <module>jackson-property-inclusion</module>
+        <module>bootstrap-registry-relocated</module>
+        <module>testrest-template-removed</module>
+        <module>httpheaders-multivaluemap</module>
+        <module>elasticsearch-rest5client</module>
+        <module>entityscan-relocated</module>
+        <module>propertymapping-relocated</module>
+        <module>kafka-streams-customizer-removed</module>
+        <module>aop-starter-rename</module>
+        <module>simpdest-message-matcher-removed</module>
+        <module>apacheds-ldap-removed</module>
+        <module>spring-security-access-relocated</module>
+        <module>propertymapper-alwaysapplyingnonnull</module>
+        <module>hibernate-query-setorder-removed</module>
+        <module>hibernate-empty-interceptor-removed</module>
+        <module>hibernate-where-orderby-removed</module>
+        <module>batch-job-builder-string-constructor</module>
+        <module>batch-package-moves</module>
+        <module>batch-chunkhandler-renamed</module>
+        <module>batch-listener-classes</module>
+
+        <!-- Tier 2 — Won't Run on 4.0  (15 modules)
+             Compiles on both versions, throws at runtime on 4.0. -->
+        <module>hibernate-query-type-required</module>
+        <module>jackson-exception-hierarchy</module>
+        <module>hibernate-dialect-removal</module>
+        <module>oauth-password-grant-removed</module>
+        <module>mockbean-removed</module>
+        <module>batch-schema-change</module>
+        <module>batch-job-serialisation</module>
+        <module>pkce-mandatory</module>
+        <module>opensaml4-removed</module>
+        <module>resttemplate-autoconfig</module>
+        <module>test-slice-relocated</module>
+        <module>mockito-test-execution-listener</module>
+        <module>javax-annotation-removed</module>
+        <module>javax-inject-removed</module>
+        <module>actuator-nullable-removed</module>
+
+        <!-- Tier 3 — Different Results on 4.0  (4 modules)
+             Compiles and runs on both, output/behaviour differs silently. -->
+        <module>jackson-date-serialisation</module>
+        <module>jackson-dates-timestamps</module>
+        <module>jackson-locale-format</module>
+        <module>hibernate-native-datetime</module>
+        <module>webjars-locator-core-removed</module>
+    </modules>
+
+</project>
