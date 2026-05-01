@@ -32,4 +32,4 @@ out/
 Thumbs.db
 
 # Project Specific
-.test-logs/
+# (target/ is already ignored, which covers target/test-logs/)
