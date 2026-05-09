@@ -1,4 +1,4 @@
-# Undertow Embedded Server Removed (Tier 1: Won't Launch)
+# Undertow Embedded Server Removed (Tier 1: Won't Build)
 
 **Summary**: Spring Boot 4.0 removes `spring-boot-starter-undertow`, breaking any application using Undertow as the embedded servlet container.
 

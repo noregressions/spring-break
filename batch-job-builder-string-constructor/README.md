@@ -1,4 +1,4 @@
-# Spring Batch JobBuilder(String) Constructor Removed (Tier 1: Won't Compile)
+# Spring Batch JobBuilder(String) Constructor Removed (Tier 1: Won't Build)
 
 **Summary**: The `JobBuilder(String)` constructor has been removed in Spring Batch 6.0. All job and step builders now require a `JobRepository` to be provided at construction time.
 

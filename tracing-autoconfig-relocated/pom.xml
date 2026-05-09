@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.example</groupId>
+        <artifactId>spring-boot-migration-tests</artifactId>
+        <version>1.0.0</version>
+    </parent>
+
+    <artifactId>tracing-autoconfig-relocated</artifactId>
+    <name>Tier 3 — Tracing Auto-Configuration Relocated to its Own Module</name>
+    <description>Boot 4.0 split spring-boot-actuator-autoconfigure into per-concern modules. The Boot-3-style dependency set (spring-boot-starter-actuator + micrometer-tracing-bridge-brave) is no longer enough — spring-boot-micrometer-tracing-brave must be added explicitly, or tracing silently does not auto-configure.</description>
+
+    <dependencies>
+        <!--
+            Deliberately the Boot-3-era dependency set: actuator + the Brave bridge.
+            Nothing more. On Boot 3.5 this is enough — BraveAutoConfiguration ships
+            transitively in spring-boot-actuator-autoconfigure.
+            On Boot 4.0 the auto-config moved to spring-boot-micrometer-tracing-brave
+            (a NEW module not pulled in by the starter), and the test fails.
+        -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-tracing-bridge-brave</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+</project>

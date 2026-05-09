@@ -1,6 +1,8 @@
-# AOP Starter Renamed (Tier 1: Won't Compile)
+# AOP Starter Renamed (Tier 1: Won't Build)
 
-**Summary**: `spring-boot-starter-aop` has been removed from the Spring Boot BOM in version 4.0. It has been replaced by `spring-boot-starter-aspectj` to better reflect its primary use case and modularization.
+**Summary**: `spring-boot-starter-aop` has been removed from the Spring Boot BOM in 4.0. It has been replaced by `spring-boot-starter-aspectj` to better reflect what the starter actually provides (AspectJ weaving support — Spring AOP itself doesn't need a starter).
+
+Empirically verified: in Boot 4.0.6 the old artifact does not exist in Maven Central; the new `spring-boot-starter-aspectj` is present in the BOM, resolves cleanly, and brings AspectJ classes (e.g. `org.aspectj.lang.JoinPoint`) onto the classpath transitively just like the old starter did. Replacing the dependency name is sufficient — no code changes needed.
 
 ## What breaks
 

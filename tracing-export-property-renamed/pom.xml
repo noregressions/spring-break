@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.example</groupId>
+        <artifactId>spring-boot-migration-tests</artifactId>
+        <version>1.0.0</version>
+    </parent>
+
+    <artifactId>tracing-export-property-renamed</artifactId>
+    <name>Tier 3 — management.tracing.enabled Silently Renamed</name>
+    <description>Boot 4.0 renames management.tracing.enabled to management.tracing.export.enabled. The legacy property is silently ignored. Apps that explicitly disabled tracing on 3.x get tracing silently re-enabled on 4.0.</description>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        <!-- Brave bridge: wires brave.Tracing when @ConditionalOnEnabledTracing[Export] fires -->
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-tracing-bridge-brave</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <profiles>
+        <!--
+            Boot 4.0 split spring-boot-actuator-autoconfigure into per-concern modules.
+            Tracing auto-config now lives in spring-boot-micrometer-tracing-brave and
+            is NOT pulled in by spring-boot-starter-actuator transitively. Without it,
+            no tracing auto-configuration runs on 4.0, and the property-rename test
+            can't observe the differential. Add it only when running against 4.0.6 —
+            the artifact does not exist on Boot 3.5 and would break the default build.
+        -->
+        <profile>
+            <id>boot4-tracing-modules</id>
+            <activation>
+                <property>
+                    <name>spring-boot.version</name>
+                    <value>4.0.6</value>
+                </property>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-micrometer-tracing-brave</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>
+    </profiles>
+
+</project>

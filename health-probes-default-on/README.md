@@ -1,39 +1,69 @@
-# Health Probes Default On (Tier 2: Won't Run)
+# Health Probes Default On (Tier 3: Different Results)
 
-**Summary**: In Spring Boot 4.0, liveness and readiness probes are enabled by default. Previously, they were only auto-configured when running on a platform like Kubernetes or when explicitly enabled.
+**Summary**: Spring Boot 4.0 silently enables liveness and readiness probes for all applications. On Boot 3.5 the probes were only auto-configured on Kubernetes (or when explicitly enabled). On Boot 4.0 they're always on. The `/actuator/health` JSON gains a `groups` field; `/actuator/health/liveness` and `/actuator/health/readiness` flip from `404` to `200`. No warning, no log message — downstream consumers parsing the body or relying on the missing endpoints can break silently.
 
-## What breaks
+## What Breaks
 
-In Spring Boot 3.5, liveness and readiness health groups are typically absent unless:
-1. The application is running on Kubernetes (detected via `KUBERNETES_SERVICE_HOST`).
-2. `management.endpoint.health.probes.enabled` is set to `true`.
+The behaviour differs at three observable layers:
 
-In Spring Boot 4.0, these probes are enabled by default regardless of the environment. This means new health groups (`liveness` and `readiness`) will appear at `/actuator/health/liveness` and `/actuator/health/readiness`. This might conflict with existing custom health groups or expose state that was previously hidden.
+| Layer | Boot 3.5.14 default | Boot 4.0.6 default |
+|---|---|---|
+| `livenessStateHealthIndicator` / `readinessStateHealthIndicator` beans | absent | auto-configured |
+| `GET /actuator/health` body | `{"status":"UP"}` | `{"groups":["liveness","readiness"],"status":"UP"}` |
+| `GET /actuator/health/liveness` | `404` | `200 {"status":"UP"}` |
+| `GET /actuator/health/readiness` | `404` | `200 {"status":"UP"}` |
 
-```properties
-# No longer needed in Spring Boot 4.0
-management.endpoint.health.probes.enabled=true
+The change is silent — Boot logs nothing about the new defaults during startup or migration. The most likely failure modes:
+
+- **JSON parsers** that did exact-shape matching on `/actuator/health` see a new top-level key.
+- **Monitoring rules** that alerted on `404` from probe URLs go silent (no data ≠ no problem).
+- **Security rules** that scoped exposure to `/actuator/health` may have inadvertently exposed `/actuator/health/liveness` and `/actuator/health/readiness` — they're sub-paths of the same endpoint.
+
+## How This Test Works
+
+`HealthProbesTest` runs the application on a random port and asserts each layer:
+- **Bean-level**: `livenessStateHealthIndicator` and `readinessStateHealthIndicator` not in the context
+- **HTTP status**: `/actuator/health/liveness` and `/actuator/health/readiness` return `404`
+- **HTTP body**: `/actuator/health` body does not contain a `"groups"` key
+
+All three pass on Boot 3.5 default; all three fail on Boot 4.0 default. Each assertion's failure message points at the specific symptom and the prescribed fix.
+
+## On Spring Boot 3.5.14
+
+```bash
+mvn test
 ```
 
-## How this test works
+**Result**: ✓ 3 tests pass.
 
-The module `health-probes-default-on` contains:
-- `ProbesApp.java`: A standard Spring Boot application with Actuator.
-- `HealthProbesTest.java`: A test that checks for the absence of the `liveness` and `readiness` health groups.
+## On Spring Boot 4.0.6
 
-On Boot 3.5: The groups are absent, and the test passes.
-On Boot 4.0: The groups are present by default, and the test fails (asserting that they should be absent to demonstrate the change).
+```bash
+mvn test -Dspring-boot.version=4.0.6
+```
+
+**Result**: ✗ 3 tests fail with informative messages:
+
+```
+expected: <false> but was: <true>   (livenessStateHealthIndicator bean is present)
+expected: <404> but was: <200>      (probe endpoints reachable)
+Body was: {"groups":["liveness","readiness"],"status":"UP"}   (new groups key)
+```
 
 ## Fix / Migration Path
 
-If you want to preserve the previous behavior and hide these probes, you must explicitly disable them.
+To restore Boot 3.5 default behaviour exactly:
 
 ```properties
-# Spring Boot 4.0 (Fixed to restore old behavior)
 management.endpoint.health.probes.enabled=false
 ```
 
+Empirically verified: with this property set on Boot 4.0, `/actuator/health` returns `{"status":"UP"}` (no `groups` key), and `/actuator/health/liveness` / `/actuator/health/readiness` return `404`. Identical to Boot 3.5 default.
+
+If your deployment _does_ use the probes (Kubernetes, load balancers, service mesh health checks), leave them on but make sure your security rules and monitoring updates account for the new endpoints.
+
 ## References
 
-- [Liveness and readiness probes are enabled by default in Spring Boot 4](https://dimitri.codes/actuator-health-probes/)
-- Master list entry: 2.2
+- [Spring Boot 4.0 Migration Guide](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-4.0-Migration-Guide)
+- [Spring Boot — Liveness and Readiness Probes](https://docs.spring.io/spring-boot/reference/actuator/endpoints.html#actuator.endpoints.kubernetes-probes)
+- Master list entry: 2.2 (was M16 in the audit)

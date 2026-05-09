@@ -89,6 +89,10 @@ TIER_1=(
   batch-chunkhandler-renamed
   batch-listener-classes
   webjars-locator-core-removed
+  conditional-on-enabled-tracing-renamed
+  auto-configure-observability-removed
+  webmvc-test-relocated
+  jackson-component-rename
 )
 
 # Tier 2 — Won't Run: compiles on both versions, but throws at runtime on 4.0.
@@ -116,6 +120,11 @@ TIER_3=(
   jackson-dates-timestamps
   jackson-locale-format
   hibernate-native-datetime
+  tracing-export-property-renamed
+  health-probes-default-on
+  tracing-autoconfig-relocated
+  mongodb-property-renames
+  spring-session-property-renames
 )
 
 # Portable tier lookup (works on bash 3.x / macOS)

@@ -134,6 +134,10 @@
         <module>batch-package-moves</module>
         <module>batch-chunkhandler-renamed</module>
         <module>batch-listener-classes</module>
+        <module>conditional-on-enabled-tracing-renamed</module>
+        <module>auto-configure-observability-removed</module>
+        <module>webmvc-test-relocated</module>
+        <module>jackson-component-rename</module>
 
         <!-- Tier 2 — Won't Run on 4.0  (15 modules)
              Compiles on both versions, throws at runtime on 4.0. -->
@@ -153,13 +157,18 @@
         <module>javax-inject-removed</module>
         <module>actuator-nullable-removed</module>
 
-        <!-- Tier 3 — Different Results on 4.0  (4 modules)
+        <!-- Tier 3 — Different Results on 4.0  (5 modules)
              Compiles and runs on both, output/behaviour differs silently. -->
         <module>jackson-date-serialisation</module>
         <module>jackson-dates-timestamps</module>
         <module>jackson-locale-format</module>
         <module>hibernate-native-datetime</module>
         <module>webjars-locator-core-removed</module>
+        <module>tracing-export-property-renamed</module>
+        <module>health-probes-default-on</module>
+        <module>tracing-autoconfig-relocated</module>
+        <module>mongodb-property-renames</module>
+        <module>spring-session-property-renames</module>
     </modules>
 
 </project>

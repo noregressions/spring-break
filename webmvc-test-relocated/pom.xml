@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.example</groupId>
+        <artifactId>spring-boot-migration-tests</artifactId>
+        <version>1.0.0</version>
+    </parent>
+
+    <artifactId>webmvc-test-relocated</artifactId>
+    <name>Tier 1 — @WebMvcTest Relocated to spring-boot-webmvc-test</name>
+    <description>Boot 4.0 split spring-boot-test-autoconfigure into per-concern modules. @WebMvcTest, along with @AutoConfigureMockMvc and most other test-side annotations, moved to per-concern jars with parallel packages. Code that imports the Boot-3 path fails to compile.</description>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <!--
+            Deliberately the Boot-3 test starter only — no spring-boot-webmvc-test or
+            spring-boot-starter-webmvc-test. Users with the same set on Boot 4 will hit
+            the compile break this module documents.
+        -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+</project>

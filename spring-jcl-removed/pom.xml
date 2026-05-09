@@ -13,7 +13,7 @@
 
     <artifactId>spring-jcl-removed</artifactId>
     <name>Tier 1 — spring-jcl Bridge Removed</name>
-    <description>spring-jcl bridge module removed in Spring Framework 7 / Boot 4.0. Spring now uses commons-logging 1.3.0 directly.</description>
+    <description>spring-jcl bridge module removed in Spring Framework 7 / Boot 4.0. Boot 4.0 manages commons-logging 1.3.x directly via the BOM. Any explicit spring-jcl declaration fails to resolve on 4.0.</description>
 
     <dependencies>
         <dependency>
